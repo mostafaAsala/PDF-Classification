@@ -1,0 +1,1 @@
+this folder contains the training models named the latest result model{model}.pkland another version with the date{model}_{day}_{month}_{hour}.csv

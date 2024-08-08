@@ -1,0 +1,1 @@
+this folder contains result file of the classification model for debugging
