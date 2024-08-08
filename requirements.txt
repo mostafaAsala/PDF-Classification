@@ -1,0 +1,11 @@
+pandas
+scikit-learn
+imbalanced-learn
+xgboost
+joblib
+pdfplumber
+PyMuPDF
+pytesseract
+pdf2image
+fastapi
+pydantic
