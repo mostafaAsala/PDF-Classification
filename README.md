@@ -18,10 +18,9 @@ Others
 
 ## Installation
 To get started, clone the repository and install the required dependencies.
-
 ```bash
-git clone https://github.com/your-username/repository-name.git
-cd repository-name
+git clone https://github.com/mostafaAsala/PDF-Classification.git
+cd PDF-Classification
 pip install -r requirements.txt
 ```
 
@@ -32,21 +31,28 @@ pip install -r requirements.txt
    ```bash
    mkdir data
    ```
-
-2. **Data Format:**  
+  
+3. **Data Format:**
+   you have three stages, the **links.csv** contains only the links and classifications, when running training the extracted text is put into column in **debug_data_out.csv** then split into trining and testing
    Ensure your data is in the correct format. The model expects the data in the following format:
-   - **Features:** 600 features per sample.
-   - **Labels:** 10 possible classes.
+   - **links:** links of pdf
+   - **text:** text column of pdf "not needed in links file"
+   - **classification:** 4 possible classes.
 
+   
    Example file structure:
    ```
    data/
-   ├── train.csv  # Training data
-   └── test.csv   # Test data
+   ├── train
+   |     └──train.csv  # Training data
+   └── test
+   |     └──test.csv   # Test data
+   └── debug_data_out.csv
+   └── link.csv
    ```
 
-3. **Data Preprocessing:**  
-   Before training, ensure your data is preprocessed correctly. The model pipeline automatically handles tokenization, vectorization, and feature selection.
+5. **Data Preprocessing:**  
+   The model pipeline automatically handles text processing, tokenization, vectorization, and feature selection.
 
 ## Training the Model
 To train the model, use the following command:
@@ -55,6 +61,7 @@ To train the model, use the following command:
 python train.py
 ```
 
+
 This script will:
 - Load the data from the `data/` directory.
 - Preprocess the data using the pipeline specified in the code.
@@ -62,14 +69,10 @@ This script will:
 - Save the trained model to the `models/` directory.
 
 **Important:**  
-Ensure that the training data (`train.csv`) is correctly placed in the `data/` directory before running the script.
+Ensure that the training data (`links.csv`) or (`debug_data_out.csv`) is correctly placed in the `data/` directory before running the script.
 
 ## Evaluation
-After training, evaluate the model using:
-
-```bash
-python evaluate.py
-```
+the model automatically evaluate the 
 
 This script will:
 - Load the trained model from the `models/` directory.
