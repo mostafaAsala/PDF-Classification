@@ -13,13 +13,16 @@ This project involves a comprehensive pipeline for PDF document classification, 
 6. [Contributing](#contributing)
 7. [License](#license)
 
-## Installation
-To get started, clone the repository and install the required dependencies.
-```bash
-git clone https://github.com/mostafaAsala/PDF-Classification.git
-cd PDF-Classification
-pip install -r requirements.txt
-```
+### Installation
+
+1. Install all required packages:
+   ```
+   pip install -r requirements.txt
+   ```
+2. Set environment variables:
+   - `poopler_Path`: Path to Poppler.
+   - `tesseract_path`: Path to Tesseract.
+
 
 ## Data Preparation
 1. **Data Directory:**  
@@ -39,24 +42,88 @@ pip install -r requirements.txt
    
    Example file structure:
    ```
-   data/
-   ├── train
-   |     └──train.csv  # Training data
-   └── test
-   |     └──test.csv   # Test data
-   └── debug_data_out.csv
-   └── link.csv
+   Project
+   │
+   └── data/
+   │   ├── train/
+   │   │   └── train.csv  # Training data
+   │   └── test/
+   │       └── test.csv   # Test data
+   │   └── debug_data_out.csv 
+   │   └── link.csv
+   │
+   └── models/
+   │   └── RandomForest_model.pkl
+   │   └── Label_encoders.pkl
+   │   └── ...
+   │
+   └── Results/
+   │   └── ...
+   │
+   └── static/
+   │   └── images/
+   │   └── CSS/
+   │
+   └── templates/
+   │   └── index.html
+   │
+   └── utils/
+   │   └── constants.py
+   │   └── mainTest.py
+   │   └── Model.py
+   │   └── pdf_module.py
+   │   └── readFile.py
+   │   └── txtFileManagement.py
+   │
+   └── App.py
+   └── requirements.txt
+   └── RunLocal.bat
+   └── train.py
    ```
+### Project Details
 
-5. **Data Preprocessing:**  
-   The model pipeline automatically handles text processing, tokenization, vectorization, and feature selection.
+- **Data Folder**: Contains data in different stages, with `links.csv` for links and classifications. Extracted text is added to `debug_data_out.csv`, then split into training (`train/train.csv`) and testing (`test/test.csv`). The model manages the stage to begin based on arguments passed to `train.py`.
 
-## Training the Model
-To train the model, use the following command:
+- **Expected Data Columns**:
+  - `links`: PDF links
+  - `text`: Text column of PDF (not needed in the links file)
+  - `classification`: 4 possible classes
 
-```bash
-python train.py
+- **Models**: Stores the result models, encoders, pipelines, and vectorizers.
+- **Results**: Stores the prediction results of the last operation.
+- **Static**: Stores the static images and styles of the web app.
+- **Templates**: Contains `index.html`, the frontend of the web app.
+- **Utils**: Various utility scripts and configurations.
+- **Requirements.txt**: Lists all the packages required for the project.
+- **RunLocal.bat**: Script to launch the web app locally.
+
+### Training
+
+To train a model, add data to the `data` folder as described, then run the following command:
+
 ```
+python train.py --no_eval_only --load_split --Preload_text --sampling=1 --type=orig
+```
+
+#### Arguments
+
+- **Boolean Arguments**:
+  - `--eval_only`: Load a trained model and evaluate testing data.
+  - `--no_eval_only`: Train the model from the start. (default)
+  - `--load_split`: Load train and test data from a previous split.
+  - `--no_load_split`: Load full data and split it into train and test. (default)
+  - `--Preload_text`: Load data from file with preloaded text column. (default)
+  - `--no_Preload_text`: Load file without text and load text from the `text_files` folder.
+
+- **Integer Arguments**:
+  - `--sampling`: Controls sampling technique (`1` for oversampling, `0` for no sampling, `-1` for undersampling).
+
+- **String Arguments**:
+  - `--type`: Specify the type of model to train. Possible values:
+    - `orig`: Original model for classifying PDFs into {Datasheet, Environmental, Manual and Guide, Others}.
+    - `Datasheet`: Distinguish between {Datasheet, Application Brief, Product Brief, Package Manual, Guide}.
+    - `Environmental`: Check for separate environmental types with multiple output columns (True/False).
+    - `Others`: Distinguish between {Life_Cycle, News, Application Brief, Product Brief, Package Drawing, PCN, Package Brief, Others}.
 
 
 This script will:
