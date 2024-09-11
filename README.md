@@ -13,7 +13,7 @@ This project involves a comprehensive pipeline for PDF document classification, 
 6. [Contributing](#contributing)
 7. [License](#license)
 
-### Installation
+## Installation
 
 1. Install all required packages:
    ```
@@ -39,7 +39,7 @@ This project involves a comprehensive pipeline for PDF document classification, 
    - **text:** text column of pdf "not needed in links file"
    - **classification:** 4 possible classes.
 
-### Project Structure
+## Project Structure
    
    ```
    Project
@@ -80,7 +80,7 @@ This project involves a comprehensive pipeline for PDF document classification, 
    └── RunLocal.bat
    └── train.py
    ```
-### Project Details
+## Project Details
 
 - **Data Folder**: Contains data in different stages, with `links.csv` for links and classifications. Extracted text is added to `debug_data_out.csv`, then split into training (`train/train.csv`) and testing (`test/test.csv`). The model manages the stage to begin based on arguments passed to `train.py`.
 
@@ -97,7 +97,7 @@ This project involves a comprehensive pipeline for PDF document classification, 
 - **Requirements.txt**: Lists all the packages required for the project.
 - **RunLocal.bat**: Script to launch the web app locally.
 
-### Training
+## Training
 
 To train a model, add data to the `data` folder as described, then run the following command:
 
