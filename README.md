@@ -39,8 +39,8 @@ This project involves a comprehensive pipeline for PDF document classification, 
    - **text:** text column of pdf "not needed in links file"
    - **classification:** 4 possible classes.
 
+### Project Structure
    
-   Example file structure:
    ```
    Project
    │
@@ -126,7 +126,7 @@ python train.py --no_eval_only --load_split --Preload_text --sampling=1 --type=o
     - `Others`: Distinguish between {Life_Cycle, News, Application Brief, Product Brief, Package Drawing, PCN, Package Brief, Others}.
 
 
-This script will:
+This command will:
 - Load the data from the `data/` directory.
 - Preprocess the data using the pipeline specified in the code.
 - Train the [Random Forest/XGBoost/Other Model] on the training data.
@@ -136,7 +136,8 @@ This script will:
 Ensure that the training data (`links.csv`) or (`debug_data_out.csv`) is correctly placed in the `data/` directory before running the script.
 
 ## Evaluation
-the model automatically evaluate the 
+the model automatically evaluate the testing data placed in `data/test/test.csv` 
+to evaluate only without training you can use command `--eval_only` while runing `train.py` 
 
 This script will:
 - Load the trained model from the `models/` directory.
@@ -146,15 +147,112 @@ This script will:
 ## Results
 The results of the model evaluation will be saved in the `results/` directory. You can find detailed reports and visualizations of the model's performance here.
 
-## Contributing
-If you'd like to contribute to this project, please fork the repository and submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Documentation Summary
+
+
+### PDF Module
+
+The `pdf_module.py` is a utility module for handling various PDF-related tasks, including reading, validating, downloading, processing, and extracting text from PDF files. It is particularly useful for automating text extraction from large collections of PDF documents.
+
+#### Key Functions
+
+1. **`read_text(file_path: str) -> str`**: Reads the content of a text file.
+2. **`is_Searchable(pdf_path: str, top_margin: float, bottom_margin: float, thresh: int) -> bool`**: Checks if a PDF contains searchable text.
+3. **`is_valid_pdf_link(url: str) -> bool`**: Validates if a URL is a valid PDF link.
+4. **`download_pdf(url: str, save_path: str) -> bool`**: Downloads a PDF from a URL.
+5. **`process_pdf(pdf_bytes: bytes, max_pages: int) -> dict`**: Processes a PDF byte stream to extract text.
+6. **`extract_text_from_pdf_Production(pdf_path: str, top_margin: float, bottom_margin: float) -> str`**: Extracts text from a PDF.
+7. **`get_links(file_path: str) -> pd.DataFrame`**: Reads a CSV file and returns valid PDF links.
+8. **`get_all_files(pdf_path: str, datasheet_path: str, use_Exist: bool) -> pd.DataFrame`**: Consolidates PDF links from two CSV files.
+9. **`extract_text_from_pdf(pdf_path: bytes, txt_path: str, top_margin: float, bottom_margin: float) -> bool`**: Extracts text from a PDF file.
+10. **`data_extract3(dataLabel_List: list, exclude_list: list, start: int, finish: int) -> None`**: Extracts data from a collection of PDF files.
+
+### Text File Management Module
+
+This module provides utility functions for handling and processing CSV files and text files.
+
+#### Key Functions
+
+1. **`remove_o(directory: str) -> None`**: Renames files by removing '.0' from filenames.
+2. **`export_id(directory: str, filename: str) -> None`**: Exports IDs of files to a CSV file.
+3. **`get_ids_from_debug(source_path: str, dest_path: str) -> None`**: Extracts 'pdf_url' from a CSV file.
+4. **`update_classification(id_source: str, data_classification: str) -> None`**: Updates document classification.
+5. **`save_csv_to_files(path: str, dir: str) -> None`**: Saves text content from a CSV file to text files.
+6. **`join_Files(file1: str, file2: str, res: str) -> None`**: Merges two CSV files.
+7. **`check_csv(path: str) -> None`**: Prints the columns length and value counts.
+8. **`remove_duplicates(file: str) -> None`**: Removes duplicate rows from a CSV file.
+
+### Model
+
+#### `TextPreprocessor` Class
+
+Responsible for text preprocessing, including tokenization, stopword removal, lemmatization, stemming, and removal of URLs, numbers, and emojis.
+
+#### `TrainingModels` Class
+
+Handles the training and evaluation of multiple classifiers on preprocessed text data.
+
+### Usage
+
+#### Preprocessing Text
+
+```python
+preprocessor = TextPreprocessor(n_jobs=4)
+preprocessed_text = preprocessor.transform(['Sample text to preprocess.'])
+print(preprocessed_text)
+```
+
+#### Training Models
+
+```python
+trainer = TrainingModels()
+trainer.Load_data()
+trainer.train()
+```
+
+#### Predicting Classes
+
+```python
+predictions = trainer.predict(['Sample text to classify.'])
+print(predictions)
+
+pdf_url = 'http://example.com/sample.pdf'
+pdf_prediction = trainer.predict_pdf(pdf_url)
+print(pdf_prediction)
+```
+
+### FastAPI Application
+
+This FastAPI application provides endpoints for making predictions based on URLs and uploaded files.
+
+#### Endpoints
+
+- **`/predict/`**: POST - Predicts based on a PDF URL.
+- **`/predict_file/`**: POST - Handles file uploads and predictions.
+- **`/predict_url_file/`**: POST - Sample and predict based on uploaded file.
+- **`/extract_text_from_pdf/`**: POST - Extract text from a PDF.
+- **`/`**: GET - Serves the index.html file.
+
+#### Application Setup
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+```
 
 ---
 
-You can customize this template further based on your specific project needs.
+This README provides an overview of the project, its structure, and details on how to use it. For more specific information, please refer to the individual module sections.
+
+
+
+
+
+
+
 
 
 
