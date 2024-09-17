@@ -13,6 +13,7 @@ This project involves a comprehensive pipeline for PDF document classification, 
 6. [Evaluation](#evaluation)
 7. [Results](#results)
 8. [Documentation Summary](#documentation-summary)
+9. [API](#fastapi-application)
 
 ## Installation
 
@@ -224,11 +225,11 @@ pdf_prediction = trainer.predict_pdf(pdf_url)
 print(pdf_prediction)
 ```
 
-### FastAPI Application
+# FastAPI Application
 
 This FastAPI application provides endpoints for making predictions based on URLs and uploaded files.
 
-#### Endpoints
+## Endpoints
 
 - **`/predict/`**: POST - Predicts based on a PDF URL.
 - **`/predict_file/`**: POST - Handles file uploads and predictions.
@@ -236,13 +237,127 @@ This FastAPI application provides endpoints for making predictions based on URLs
 - **`/extract_text_from_pdf/`**: POST - Extract text from a PDF.
 - **`/`**: GET - Serves the index.html file.
 
-#### Application Setup
+## Application Setup
 
 ```python
 from fastapi import FastAPI
 
 app = FastAPI()
 ```
+
+## running the web app
+```python
+python -m uvicorn App:app --reload
+```
+
+## API Doccumentation
+- **predict pdf**:
+   
+   - **Endpoint**: /predict/
+   - **Method**: POST
+   - **Input**: URLRequest data containing a single url string field
+        - e.g., {"url": "http://example.com/sample.pdf"}
+   - **Output**: JSON response with the predicted class and prediction confidence.
+   - **Example Response**:
+      ```json
+      {
+        "model_Prediction": "Datasheet",
+        "model_confidence": 0.2689622205537494,
+        "URL": "http://download.siliconexpert.com/pdfs2/2022/12/18/0/40/41/502645/zhengs_/auto/mq-7b-ver1_6.pdf"
+      }
+      ```
+- **predict file**:
+   
+   - **Endpoint**: /predict/
+   - **Method**: POST
+   - **Input**:
+      - **file** string($binary) : file containing header URL to predict its types
+      - **preExtractedText** boolean : flag to specify if **text** column exist and is extracted or not
+   - **Output**: csv table with predictions
+   - **Example Response**:
+     - response Body: a csv file contains the result prediction
+       
+       | Index | URL | model_confidence | model_Prediction | VENDOR_CODE | ONLINE_LINK | PROJECT | Extracted | num_pages | extracted_len | urls | textLenght | numOfPages | Searchable | reliable | lang | Trust_Level flag | 2nd Prediction|
+       |------|-------|---------------|--------------------|------------|-------------|----------|-----------|-----------|---------------|------|------------|------------|------------|----------|------|-----------|--------------|
+       | 0  | http://offline-example.pdf  | **0.41678303078230416**  | **Datasheet**  | ACL  | https://online-example.pdf  | Ds_Bk  | 1  | 1  | 1983  | http://offline-example.pdf  | 1983  | -  | True  | False  | e  | Low confidence Level  | Product Brief |
+
+     - response header:
+         ```curl
+          content-disposition: attachment; filename="result.csv" 
+          content-length: 4324 
+          content-type: text/csv; charset=utf-8 
+          date: Tue,17 Sep 2024 07:41:55 GMT 
+          etag: "8c79097eebcf7fce262430de968ca5f7" 
+          last-modified: Tue,17 Sep 2024 07:42:35 GMT 
+          server: uvicorn 
+         ```
+- **predict file**:
+   
+   - **Endpoint**: /predict_url_file/
+   - **Method**: POST
+   - **Input**:
+      - **file** string($binary) : file containing header URL to predict its types
+      - **number** integer : number of pdf links processed before showing result
+   - **Output**: list of JSON response with the predicted class and prediction confidence.
+   - **Example Response**:
+     - response Body: list of json format responses liske shown for each line in the original csv
+       ```json
+       {
+       "Index": 0,
+        "URL": "http://offline-example.pdf",
+       "model_confidence": 0.41678303078230416,
+       "model_Prediction": "Datasheet",
+       "VENDOR_CODE": "-",
+       "ONLINE_LINK": "https://online-example.pdf",
+       "PROJECT": "Ds_Bk",
+       "Extracted": 1,
+       "num_pages": 1,
+       "extracted_len": 1983,
+       "urls": "http://offline-example.pdf",
+       "textLenght": 1983,
+       "numOfPages": "-",
+       "Searchable": true,
+       "reliable": false,
+       "lang": "e",
+       "Trust_Level flag": "Low confidence Level",
+       "2nd Prediction": "Product Brief"
+       }
+       ```
+     - response header:
+         ```curl
+          content-type: application/json 
+          date: Tue,17 Sep 2024 08:26:35 GMT 
+          server: uvicorn 
+          transfer-encoding: chunked 
+         ```
+- **predict file**:
+   
+   - **Endpoint**: /extract_text_from_pdf/
+   - **Method**: POST
+   - **Input**:
+      - **URL** string : link for the pdf to be extracted
+   - **Output**: csv table with predictions
+   - **Example Response**:
+     - response Body: json format response with `text` as extracted from pdf
+       
+       ```json
+       {
+        "text": "毒性气体传感器 （型号：MQ-7B） 使用说明书 版本号：1.6 实施日期：2021-07-1 郑州炜盛电子科技有限公司 Zhengzhou Winsen Electronic Technology Co.,"
+       }
+       ```
+
+     - response header:
+         ```python
+             content-length: 8469 
+             content-type: application/json 
+             date: Tue,17 Sep 2024 08:34:46 GMT 
+             server: uvicorn 
+         ```
+## Web App 
+   - you can use the web app directly with sophisticated interface
+![image](https://github.com/user-attachments/assets/6263cbd1-2533-415c-96dd-f8535b847d41)
+
+
 
 ---
 
